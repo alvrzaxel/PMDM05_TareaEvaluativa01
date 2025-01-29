@@ -1,0 +1,21 @@
+<!-- Cabecera con el título "Camera" -->
+<app-page-header titulo="Camera"></app-page-header>
+
+<!-- Contenedor principal con IonContent, asegurando que se muestra a pantalla completa-->
+<ion-content [fullscreen]="true">
+
+  <!-- Swiper-container para mostrar imágenes en un carrusel con dos imágenes visibles a la vez-->
+  <swiper-container [slidesPerView]="2" [loop]="false">
+
+    <!-- Bucle para recorrer la lista de imágenes obtenidas desde el servicio de la cámara -->
+    <swiper-slide *ngFor="let image of cameraService.getListaUrl(); index as position">
+      <!-- Tarjeta IonCard para cada imagen -->
+      <ion-card>
+        <ion-img [src]="image"></ion-img>
+        <ion-card-header>
+          <ion-card-title>Photo: {{position + 1}}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </swiper-slide>
+  </swiper-container>
+</ion-content>

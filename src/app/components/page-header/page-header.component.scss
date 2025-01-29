@@ -1,0 +1,14 @@
+ion-toolbar {
+    --ion-text-align: center; /* Centra el texto dentro del toolbar */
+  }
+  
+  ion-title {
+    text-align: center; /* Asegura que el texto esté centrado */
+    margin-left: auto; /* Alinea el título correctamente en la barra */
+    margin-right: auto; /* Alinea el título correctamente en la barra */
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1; /* Asegura que el título esté por encima del contenido */
+  }

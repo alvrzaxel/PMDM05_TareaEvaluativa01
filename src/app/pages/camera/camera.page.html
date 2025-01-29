@@ -1,0 +1,28 @@
+<!-- Cabecera con el título "Camera"-->
+<app-page-header titulo="Camera"></app-page-header>
+
+<!-- Contenido principal de la página -->
+<ion-content [fullscreen]="true">
+  <!--  Ejemplo simple de la cámara 
+    <ion-button (click)="takePicture()" expand="block" fill="clear" shape="round">
+        Click me
+    </ion-button>
+    <ion-img [src]="url"></ion-img>
+    -->
+
+  <!-- Botón para tomar una foto, al hacer clic se llama al método 'takePhoto()' del servicio CameraService -->
+  <ion-button (click)="cameraService.takePhoto()" expand="block" fill="clear" shape="round">
+    Click me
+</ion-button>
+
+<!-- Cuadrícula (grid) para mostrar las imágenes capturadas -->
+<ion-grid>
+    <ion-row>
+      <!-- Recorre la lista de URLs de imágenes y muestra cada una en un contenedor de columna -->
+      <ion-col size="6" *ngFor="let url of cameraService.getListaUrl()">
+        <!-- Muestra la imagen en la vista usando el enlace (URL) obtenido del servicio -->
+        <ion-img [src]="url"></ion-img>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

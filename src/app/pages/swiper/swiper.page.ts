@@ -14,4 +14,7 @@ export class SwiperPage implements OnInit {
   ngOnInit() {
   }
 
+
+  imageLoaded: boolean[] = [];
+
 }

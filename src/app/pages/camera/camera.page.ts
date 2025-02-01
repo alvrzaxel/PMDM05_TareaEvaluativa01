@@ -13,7 +13,7 @@ import { CameraService } from 'src/app/services/camera.service';
 // Definición de la clase para la página "Camera"
 export class CameraPage implements OnInit{
 
-	// Almacenará las URL de las imágenes capturadas
+	// URLs de las imágenes capturadas
 	listImageUrl: string[] = [];
 	
 	// Dependencias necesarias
@@ -26,17 +26,17 @@ export class CameraPage implements OnInit{
 	public async takePhoto() {
 
 		// Captura una foto con la configuración especificada
-	  const image = await Camera.getPhoto({
-	    quality: 90,
-	    allowEditing: false, // No permite la edición de la imagen tras capturarla
-	    source: CameraSource.Camera, // // La foto se toma desde la cámara
-	    resultType: CameraResultType.Uri // Tipo de resultado (URI para obtener la ruta de la imagen)
+		const image = await Camera.getPhoto({
+			quality: 90,
+			allowEditing: false, // No permite la edición de la imagen tras capturarla
+			source: CameraSource.Camera, // // La foto se toma desde la cámara
+			resultType: CameraResultType.Uri // Tipo de resultado (URI para obtener la ruta de la imagen)
 		});
 		
 		// Muestra la información de la imagen capturada en la consola
 		console.log(image);
 		
 		// Añade la ruta de la imagen capturada al array 'listImageUrl' para mostrarla en la vista
-    if (image.webPath) this.listImageUrl.unshift(image.webPath);
+    	if (image.webPath) this.listImageUrl.unshift(image.webPath);
 	}
 }

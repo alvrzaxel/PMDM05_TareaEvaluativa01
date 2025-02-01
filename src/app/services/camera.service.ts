@@ -12,7 +12,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 export class CameraService {
 
   urlsList: string[] = []; // Lista de URLs de las imágenes
-  pathList: string[]= []; // Lista de rutas locales de las imágenes
+  pathList: string[]= []; // Lista de rutas de los ficheros locales de las imágenes
 
   // Dependencias necesarias
   constructor(
@@ -23,29 +23,31 @@ export class CameraService {
     this.loadSaved();
   }
 
-  // Método para cargar fotos previamente guardadas desde el almacenamiento local
+  // Método para recuperar las fotos previamente guardadas desde el almacenamiento local
   private async loadSaved() {
+
     // Recupera la lista de rutas guardadas desde el servicio de almacenamiento local
     const photoList = await this.storage.getObject("paths");
 
     // Si no hay rutas guardadas, inicializa una lista vacía
-    this.pathList = JSON.parse(photoList.value) || [];  
+    // Con parse, separamos las rutas
+    this.pathList = JSON.parse(photoList.value) || []; 
 
     // Variable para almacenar la ruta final de la imagen
     let webviewPath: string;
 
     // Recorre cada ruta guardada en pathList
     for (let photo of this.pathList) {
-      // Si la app no está en un dispositivo híbrido = navegador
+      // Si la app no está en un dispositivo híbrido (navegador)
       if (!this.platform.is("hybrid")) {
-          // Lee el archivo de imagen desde el sistema de archivos  
+          // Lee el archivo de imagen desde el sistema de archivos
           const readFile = await Filesystem.readFile({
               path: photo, // Ruta del archivo
               directory: Directory.Data // Directorio donde se encuentra el archivo
           });
 
           // Convierte la imagen a una cadena base64 para poder mostrarla en el navegador
-          webviewPath = `data:image/jpeg;base64,${readFile.data}`;  
+          webviewPath = `data:image/jpeg;base64,${readFile.data}`;
 
       } else {
          // Si está en un dispositivo híbrido, obtiene la URI del archivo usando Capacitor
@@ -62,7 +64,7 @@ export class CameraService {
     return this.urlsList;
   }
 
-  // Método para tomar una foto utilizando la cámara
+  // Método para capturar una foto utilizando la cámara
   public async takePhoto() {
     // Obtiene la foto desde la cámara del dispositivo
     const image = await Camera.getPhoto({
@@ -73,6 +75,7 @@ export class CameraService {
     });
 
     // Añade la imagen en formato base64 a la lista de URLs
+    // Necesita añadir la cabecera delante para convertir en formato URI
     this.urlsList.push("data:image/jpeg;base64," + image.base64String);
 
     // Guarda la imagen en el sistema de archivos del dispositivo
@@ -81,26 +84,25 @@ export class CameraService {
 
   // Método para guardar una foto en el sistema de archivos
   private async savePhoto(image: any) {
+
     // Extrae la cadena base64 de la imagen tomada
-    // La imagen llega en formato base64, que es una cadena de texto representando la imagen
     let base64Data = image.base64String;
 
-    // Crea un nombre único para el archivo usando la marca de tiempo actual (en milisegundos)
-    // Nombre del archivo basado en la hora actual + extensión .jpeg
+    // Crea nombre único para el archivo usando la fecha/hora actual (en milisegundos) + extension .jpeg
     const fileName = new Date().getTime() + '.jpeg';
 
     // Escribe el archivo en el sistema de archivos del dispositivo en el directorio 'Data'
     const savedFile = await Filesystem.writeFile({
       path: fileName, // Define el nombre y la ruta del archivo
       data: base64Data, // Define los datos que se escribirán (la imagen en formato base64)
-      directory: Directory.Data // Directorio donde se guardará el archivo, en este caso 'Data'
+      directory: Directory.Data // Directorio donde se guardará el archivo
     });
 
     // Variable para almacenar la ruta final del archivo
     let path: string;
 
-    // Si la app está ejecutándose en un dispositivo nativo (Android/iOS)
-    // obtiene la URI completa del archivo guardado
+    // Detecta el dispositivo donde se ejecuta la app
+    // Obtiene la URI completa del archivo guardado
     if (this.platform.is('hybrid')) {
       path = savedFile.uri; // Para dispositivos híbridos, utiliza la URI generada por Capacitor
       console.log("Hybrid URI: " + savedFile.uri);
@@ -110,9 +112,9 @@ export class CameraService {
     }
 
     // Añade la ruta del archivo a la lista de rutas
-    this.pathList.push(path); // Guarda la ruta en el array de rutas
-  
+    this.pathList.push(path);
+
     // Guarda la lista de rutas de imágenes en el almacenamiento local
-    this.storage.setObject("paths", this.pathList); // Almacena las rutas de las imágenes bajo la clave 'rutas'
+    this.storage.setObject("paths", this.pathList);
   }
 }

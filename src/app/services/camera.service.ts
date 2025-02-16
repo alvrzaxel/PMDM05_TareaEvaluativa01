@@ -64,6 +64,11 @@ export class CameraService {
     return this.urlsList;
   }
 
+  // Método getter que retorna la lista la lista de Paths de las imágenes
+  public getListPath(): string[] {
+    return this.pathList;
+  }
+
   // Método para capturar una foto utilizando la cámara
   public async takePhoto() {
     // Obtiene la foto desde la cámara del dispositivo

@@ -1,0 +1,22 @@
+<!-- Cabecera con el título "Voz" -->
+<app-page-header titulo="Voz"></app-page-header>
+
+<!-- Contenedor principal con IonContent, asegurando que se muestra a pantalla completa-->
+<ion-content [fullscreen]="true">
+
+  <ion-button (click)="recognitionService.startRecognition()" expand="block" fill="clear" shape="round">
+    INICIAR RECONOCIMIENTO DE VOZ
+  </ion-button>
+
+  <!-- Tarjeta con la imagen y el botón -->
+  <ion-card *ngIf="recognitionService.latestPhotoUrl" class="photo-card">
+    <!-- Imagen dentro de la tarjeta -->
+    <img [src]="recognitionService.latestPhotoUrl" alt="Última foto tomada" class="card-image" />
+
+    <!-- Botón que puedes desarrollar después -->
+    <ion-button (click)="this.onShareImage()" expand="block" class="card-button">
+      Compartir foto
+    </ion-button>
+  </ion-card>
+  
+</ion-content>

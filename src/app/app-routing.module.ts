@@ -19,6 +19,10 @@ const routes: Routes = [
     path: 'swiper',
     loadChildren: () => import('./pages/swiper/swiper.module').then( m => m.SwiperPageModule)
   },
+  {
+    path: 'voice',
+    loadChildren: () => import('./pages/voice/voice.module').then( m => m.VoicePageModule)
+  },
 ];
 
 @NgModule({

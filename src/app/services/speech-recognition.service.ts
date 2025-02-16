@@ -9,9 +9,8 @@ import { CameraService } from './camera.service';
 export class SpeechRecognitionService {
 
   public latestPhotoUrl: string = ''; // URL de la última foto capturada
-  private photoTaken: boolean = false; // Estado que indica si ya se ha tomado una foto
 
-  constructor(private cameraService: CameraService) { }
+  constructor() { }
 
   // Inicia el reconocimiento de voz y escucha el comando "foto" para abrir la cámara
   public async startRecognition() {
@@ -37,8 +36,6 @@ export class SpeechRecognitionService {
       });
       
       console.log('Speech recognition started', result);
-
-      this.photoTaken = false;
       
       // Escucha los resultados parciales del reconocimiento de voz
       SpeechRecognition.addListener("partialResults", (data: any) => {

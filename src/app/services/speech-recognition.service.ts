@@ -1,7 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { CameraService } from './camera.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +8,7 @@ import { CameraService } from './camera.service';
 export class SpeechRecognitionService {
 
   public latestPhotoUrl: string = ''; // URL de la última foto capturada
+  private isProcessing: boolean = false;
 
   constructor() { }
 
@@ -18,21 +18,27 @@ export class SpeechRecognitionService {
     try {
       
       // Solicitar permisos para el reconocimiento de voz
-      console.log('Requesting permissions...');
-      const permission = await SpeechRecognition.requestPermissions();
+      console.log('Checking permissions...');
+      const permissionStatus = await SpeechRecognition.checkPermissions();
 
-      // Verificar si el permiso fue concedido
-      if (!permission.speechRecognition) {
-        console.error('Speech recognition permission denied');
-        return;
+      // Si no se tiene permiso, se solicita
+      if (!permissionStatus.speechRecognition) {
+        console.log('Requesting permissions...');
+        const permission = await SpeechRecognition.requestPermissions();
+
+        // Si el permiso no es concedido, se muestra un error y se detiene el proceso
+        if (!permission.speechRecognition) {
+          console.error('Speech recognition permission denied');
+          return;
+        }
       }
       
-      // Inicia el reconocimiento de voz
+      // Inicia el reconocimiento de voz, se establece el idioma y se configuran los resultados
       console.log('Starting speech recognition...');
       const result = await SpeechRecognition.start({
-        language: "es-ES", // Idioma en el que se realizarán los comandos
-        maxResults: 2, // Número máximo de resultados a capturar
-        partialResults: true, // Resultados parciales mientras se habla
+        language: "es-ES",
+        maxResults: 2,
+        partialResults: true,
       });
       
       console.log('Speech recognition started', result);
@@ -41,20 +47,22 @@ export class SpeechRecognitionService {
       SpeechRecognition.addListener("partialResults", (data: any) => {
         console.log("Partial results received:", data);
 
+        // Si ya se está procesando una foto, evitar iniciar otra
+        if (this.isProcessing) return;
+
         // Verifica si se encontraron coincidencias
-        if (data.matches && data.matches.length > 0) {
-          const transcribedText = data.matches[0]; // Texto transcrito de la voz
-          SpeechRecognition.stop();
+        if (data.matches && Array.isArray(data.matches)) {
+          const transcribedText = data.matches[0]?.toString().toLowerCase() || '';
           console.log("Transcribed text:", transcribedText);
 
-          // Si el texto transcrito es "fotos", abre la cámara
-          if (transcribedText.toLowerCase() === 'foto') {
-            this.capturePhoto();
+          // Si el comando de voz es "foto", se captura la imagen
+          if (transcribedText === 'foto') {
+            this.isProcessing = true;
+            SpeechRecognition.stop(); // Detiene el reconocimiento de voz
+            this.capturePhoto(); // Llama a la función que captura la foto
           }
-
         } else {
-          console.log("No matches found.");
-          this.startRecognition(); // Reintentar reconocimiento
+          console.log("No valid speech detected.");
         }
       });
   
@@ -63,23 +71,28 @@ export class SpeechRecognitionService {
     }
   }
 
-  // Captura una foto y obtiene la URL web de la última foto capturada
+  // Captura una foto y obtiene la URL (WebPath) de la última foto capturada
   private async capturePhoto() {
     try {
-      // Llamada a la cámara directamente sin usar el servicio
+      // Llamada a la cámara para capturar la imagen
       const image = await Camera.getPhoto({
-        resultType: CameraResultType.Uri, // Obtener la URI de la foto
-        source: CameraSource.Camera, // Usar la cámara para capturar la imagen
-        quality: 100, // Calidad máxima de la foto
+        resultType: CameraResultType.Uri, // Obtiene la URI de la foto
+        source: CameraSource.Camera,
+        quality: 100,
       });
   
-      // Obtiene la ruta de la imagen (webPath) y la asigna a la propiedad latestPhotoUrl
+      // Asigna la URL de la foto capturada
       this.latestPhotoUrl = image.webPath ? image.webPath : '';
-      console.log('Foto capturada, webPath:', this.latestPhotoUrl); // Muestra la URL de la foto
+      console.log('Foto capturada, webPath:', this.latestPhotoUrl);
   
     } catch (error) {
       console.error('Error al capturar la foto:', error);
     }
   }
 
+  // Borra la foto si sale y vuelve a entrar a la vista "voice"
+  clearPhoto() {
+    console.log('Foto eliminada');
+    this.latestPhotoUrl = ''; // Borra la foto
+  }
 }

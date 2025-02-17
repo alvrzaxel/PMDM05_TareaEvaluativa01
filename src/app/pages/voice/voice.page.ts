@@ -13,11 +13,12 @@ export class VoicePage implements OnInit {
   constructor(public recognitionService: SpeechRecognitionService) { }
 
   ngOnInit() {
+    this.recognitionService.clearPhoto();
   }
 
   // Método para compartir la imagen cuando se presione el botón
   onShareImage() {
-    // Obtener la URL de la última foto tomada desde el servicio
+    // Obtiene la URL de la última foto tomada desde el servicio
     const webPath = this.recognitionService.latestPhotoUrl;
 
     if (webPath) {

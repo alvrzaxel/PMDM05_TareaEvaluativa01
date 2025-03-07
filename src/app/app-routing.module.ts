@@ -23,6 +23,10 @@ const routes: Routes = [
     path: 'voice',
     loadChildren: () => import('./pages/voice/voice.module').then( m => m.VoicePageModule)
   },
+  {
+    path: 'leaflet',
+    loadChildren: () => import('./pages/leaflet/leaflet.module').then( m => m.LeafletPageModule)
+  },
 ];
 
 @NgModule({

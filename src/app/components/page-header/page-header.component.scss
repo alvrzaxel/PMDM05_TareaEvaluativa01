@@ -1,5 +1,7 @@
 ion-toolbar {
     --ion-text-align: center; /* Centra el texto dentro del toolbar */
+    display: flex;
+    align-items: center; /* Centra verticalmente */
   }
   
   ion-title {

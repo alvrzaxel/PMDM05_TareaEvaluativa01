@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'PMDM04_TE02',
+  appName: 'PMDM05_TE01',
   webDir: 'www'
 };
 

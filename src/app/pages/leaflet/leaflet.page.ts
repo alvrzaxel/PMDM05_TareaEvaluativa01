@@ -1,6 +1,4 @@
-import { Zoom } from './../../../../node_modules/@types/leaflet/index.d';
 import { Component, OnInit } from '@angular/core';
-
 import * as L from 'leaflet';
 
 @Component({
@@ -34,10 +32,10 @@ export class LeafletPage implements OnInit {
   // Obtiene las coordenadas e inicializa el mapa con un marcador
   public async initMap() {
 
-    // Obtiene las coordenadas de la ciudad antes de inicializar el mapa
+    // Obtiene las coordenadas de la ciudad desde la API antes de inicializar el mapa
     await this.getCoordinates(this.city);
     
-    // Inicializa el mapa de Leaflet centrado en las coordenadas obtenidas
+    // Inicializa el mapa de Leaflet centrado en las coordenadas obtenidas con zoom 13
     this.map = L.map('map').setView([this.coordinates[0], this.coordinates[1]], 13);
 
     // Agrega las capas de tiles usando OpenStreetMap al mapa
@@ -52,7 +50,6 @@ export class LeafletPage implements OnInit {
     // Asocia un popup al marcador con el nombre de la ciudad y sus coordenadas
     // Usamos etiquetas HTML para formatear el texto del popup
     marker.bindPopup(`<strong>${this.city}</strong> <em>${this.coordinates.toString()}</em>`).openPopup();
-    
   }
 
   // Método para obtener las coordenadas de una ciudad a partir de la API de Nominatim
